@@ -13,6 +13,8 @@
 			| <a href = "{{ url_for('user', nickname=g.user.nickname) }}">Your Profile</a>
 			| <a href="{{ url_for('logout') }}">Logout</a>
 			{% endif %}
+			<!-- whoosh search submit button code
+			| <form style="display: inline;" action="{{url_for('search')}}" method='post' name='search'>{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}<input type = "submit" value="search"></form> -->
 		</div>
 		<hr>
 		{% with messages = get_flashed_messages() %}
