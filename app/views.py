@@ -5,6 +5,7 @@ from forms import LoginForm, EditForm, PostForm, SearchForm
 from models import User, ROLE_USER, ROLE_ADMIN, Post
 from datetime import datetime
 from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS
+from emails import follower_notifications
 
 @app.route('/', methods = ['GET', 'POST'])
 @app.route('/index', methods = ['GET', 'POST'])
@@ -20,7 +21,6 @@ def index(page = 1):
 		db.session.commit()
 		flash('Your post is now live!')
 		return redirect(url_for('index'))
-	#posts = g.user.posts.paginate(page, POSTS_PER_PAGE, False)
 	posts = g.user.followed_posts().paginate(page, POSTS_PER_PAGE, False)
 	return render_template("index.html", 
 		title = 'Home', 
@@ -114,6 +114,7 @@ def edit():
 		form = form)
 
 @app.route('/follow/<nickname>')
+@login_required
 def follow(nickname):
 	user = User.query.filter_by(nickname = nickname).first()
 	if user == None:
@@ -129,6 +130,7 @@ def follow(nickname):
 	db.session.add(u)
 	db.session.commit()
 	flash('You are now following ' + nickname + '!')
+	follower_notifications(user, g.user)
 	return redirect(url_for('user', nickname = nickname))
 
 @app.route('/unfollow/<nickname>')

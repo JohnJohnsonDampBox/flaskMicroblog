@@ -1,5 +1,6 @@
 <table>
 	<tr valign="top">
-		<td><img src = "{{g.user.avatar(50)}}"></td><td><i>{{post.author.nickname}} says: </i><br>{{post.body}}</td>
+		<!-- added link to profile on user nickname in post header -->
+		<td><img src = "{{g.user.avatar(50)}}"></td><td><i><a href="{{ url_for('user', nickname=post.author.nickname) }}">{{post.author.nickname}} says:</a></i><br>{{post.body}}</td>
 	</tr>
 </table>
