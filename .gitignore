@@ -10,3 +10,4 @@ _mailinglist
 venv
 flask
 tmp
+*.mo
