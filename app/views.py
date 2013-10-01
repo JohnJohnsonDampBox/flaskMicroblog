@@ -7,6 +7,31 @@ from datetime import datetime
 from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS
 from emails import follower_notifications
 
+
+@lm.user_loader
+def load_user(id):
+	return User.query.get(int(id))
+
+
+@app.before_request
+def before_request():
+	g.user = current_user
+	if g.user.is_authenticated():
+		g.user.last_seen = datetime.utcnow()
+		db.session.add(g.user)
+		db.session.commit()
+		g.search_form = SearchForm()
+
+
+@app.errorhandler(404)
+def internal_error(error):
+	return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+	db.session.rollback()
+	return render_template('500.html'), 500
+
 @app.route('/', methods = ['GET', 'POST'])
 @app.route('/index', methods = ['GET', 'POST'])
 @app.route('/index/<int:page>', methods = ['GET', 'POST'])
@@ -28,10 +53,6 @@ def index(page = 1):
 		form = form,
 		posts = posts)
 
-@lm.user_loader
-def load_user(id):
-	return User.query.get(int(id))
-
 @app.route('/login', methods = ['GET', 'POST'])
 @oid.loginhandler
 def login():
@@ -45,15 +66,6 @@ def login():
 		title = 'Sign In',
 		form = form, 
 		providers = app.config['OPENID_PROVIDERS'])
-
-@app.before_request
-def before_request():
-	g.user = current_user
-	if g.user.is_authenticated():
-		g.user.last_seen = datetime.utcnow()
-		db.session.add(g.user)
-		db.session.commit()
-		g.search_form = SearchForm()
 
 @oid.after_login
 def after_login(resp):
@@ -165,13 +177,3 @@ def search_results(query):
 	return render_template('search_results.html',
 		 query=query,
 		 results = results)
-
-
-@app.errorhandler(404)
-def internal_error(error):
-	return render_template('404.html'), 404
-
-@app.errorhandler(500)
-def internal_error(error):
-	db.session.rollback()
-	return render_template('500.html'), 500
