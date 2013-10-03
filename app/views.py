@@ -10,6 +10,7 @@ from app import babel
 from flask.ext.babel import gettext
 from flask.ext.sqlalchemy import get_debug_queries
 from config import DATABASE_QUERY_TIMEOUT
+from config import WHOOSH_ENABLED
 
 
 
@@ -32,6 +33,7 @@ def before_request():
 		db.session.commit()
 		g.search_form = SearchForm()
 	g.locale = get_locale()
+	g.search_enabled = WHOOSH_ENABLED
 
 
 @app.errorhandler(404)
