@@ -20,7 +20,7 @@ oid = OpenID(app, os.path.join(basedir, 'tmp'))
 mail = Mail(app)
 babel = Babel(app)
 
-if not app.debug:
+if not app.debug and MAIL_SERVER != '':
     import logging
     from logging.handlers import SMTPHandler
     credentials = None
@@ -48,6 +48,6 @@ if os.environ.get('HEROKU') is not None:
     app.logger.info('microblog startup')
 
 app.jinja_env.globals['momentjs'] = momentjs
-babel = Babel(app)
+
 
 from app import views, models
