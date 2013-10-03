@@ -1,13 +1,7 @@
-.DS_Store
 *.pyc
 *.pyo
-env
-env*
-dist
-*.egg
-*.egg-info
-_mailinglist
-venv
+app.db
+search.db
 flask
-tmp
 *.mo
+tmp
