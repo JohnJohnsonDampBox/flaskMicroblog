@@ -2,7 +2,7 @@ from app import db
 from hashlib import md5
 from app import app
 import re
-#import flask.ext.whooshalchemy as whooshalchemy
+from config import WHOOSH_ENABLED
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
@@ -78,7 +78,7 @@ class User(db.Model):
 		return '<User %r>' % (self.nickname)
 
 class Post(db.Model):
-	#__searchable__ = ['body']
+	__searchable__ = ['body']
 
 	id = db.Column(db.Integer, primary_key = True)
 	body = db.Column(db.String(140))
@@ -87,3 +87,8 @@ class Post(db.Model):
 
 	def __repr__(self):
 		return '<Post %r>' % (self.body)
+
+#removed for bug with paginate
+# if WHOOSH_ENABLED:
+# 	import flask.ext.whooshalchemy as whooshalchemy
+# 	whooshalchemy.whoosh_index(app, Post)

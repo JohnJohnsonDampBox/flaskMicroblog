@@ -8,6 +8,8 @@ from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES
 from emails import follower_notifications
 from app import babel
 from flask.ext.babel import gettext
+from flask.ext.sqlalchemy import get_debug_queries
+from config import DATABASE_QUERY_TIMEOUT
 
 
 
@@ -187,3 +189,25 @@ def search_results(query):
 	return render_template('search_results.html',
 		 query=query,
 		 results = results)
+
+@app.route('/delete/<int:id>')
+@login_required
+def delete(id):
+	post = Post.query.get(id)
+	if post == None:
+		flash('Post not found')
+		return redirect(url_for('index'))
+	if post.author.id != g.user.id:
+		flash('You cannot delete this post')
+		return redirect(url_for('index'))
+	db.session.delete(post)
+	db.session.commit()
+	flash('Your post has been deleted')
+	return redirect(url_for('index'))
+
+@app.after_request
+def after_request(response):
+	for query in get_debug_queries():
+		if query.duration >= DATABASE_QUERY_TIMEOUT:
+			app.logger.warning("SLOW QUERY: %s\nParameters: %s\nDuration: %fs\nContext: %s\n" % (query.statement, query.parameters, query.duration, query.context))
+	return response

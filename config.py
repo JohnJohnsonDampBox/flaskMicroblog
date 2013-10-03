@@ -20,7 +20,7 @@ MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
 MAIL_USERNAME = 'dampboxdev'
-MAIL_PASSWORD = 'MtBaker2013'
+MAIL_PASSWORD = '********' #removed password
 
 ADMINS = ['dampboxdev@gmail.com']
 
@@ -28,9 +28,14 @@ POSTS_PER_PAGE = 3
 
 WHOOSH_BASE = os.path.join(basedir, 'search.db')
 
+WHOOSH_ENABLED = os.environ.get('HEROKU') is None
+
 MAX_SEARCH_RESULTS = 50
 
 LANGUAGES = {
 	'en': 'English',
 	'es': 'Espanol'
 }
+
+SQLALCHEMY_RECORD_QUERIES = True
+DATABASE_QUERY_TIMEOUT = 0.5
