@@ -33,7 +33,7 @@ def before_request():
 		db.session.commit()
 		g.search_form = SearchForm()
 	g.locale = get_locale()
-	g.search_enabled = WHOOSH_ENABLED
+	g.search_enabled = False
 
 
 @app.errorhandler(404)
